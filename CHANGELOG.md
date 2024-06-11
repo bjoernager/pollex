@@ -3,6 +3,12 @@
 This is the changelog of Pollex.
 See `"README.md"` for more information.
 
+## 0.1.1
+
+* Set documentation link
+* Update homepage
+* Update readme
+
 ## 0.1.0
 
 * Bump minor

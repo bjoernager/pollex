@@ -1,12 +1,12 @@
 [package]
 name          = "pollex"
-version       = "0.1.0"
+version       = "0.1.1"
 authors       = ["Gabriel Bjørnager Jensen"]
 edition       = "2021"
 description   = "Arms and thumbs."
-#documentation = "https://docs.rs/pollex"
+documentation = "https://docs.rs/pollex/"
 readme        = "README.md"
-homepage      = "https://mandelbrot.dk/pollex"
+homepage      = "https://crates.io/crates/pollex"
 repository    = "https://mandelbrot.dk/pollex"
 license       = "AGPL-3.0-or-later"
 

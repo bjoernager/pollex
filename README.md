@@ -1,6 +1,8 @@
 # About
 
-[Pollex](https://mandelbrot.dk/pollex) is a Rust-written library for manipulating instructions of Arm ISAs.
+[Pollex](https://crates.io/crates/pollex/) is a Rust-written library for manipulating instructions of Arm ISAs.
+
+See [Docs.rs](https://docs.rs/pollex/) for documentation.
 
 ## Copyright & Licensing
 
