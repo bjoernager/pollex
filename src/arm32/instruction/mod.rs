@@ -26,6 +26,7 @@ mod display;
 
 use crate::arm32::Condition;
 
+/// An Arm32 instruction.
 pub enum Instruction {
 	Branch { condition: Condition, immediate: i32 },
 

@@ -21,6 +21,10 @@
 
 use core::fmt::Display;
 
+/// An Arm register.
+///
+/// Registers are number `R<N>`, where *N* denotes a decimal number from (0) to (15).
+/// Some registers have aliases, such as `r15|pc`.
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 #[repr(u8)]
 pub enum Register {

@@ -19,6 +19,10 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
+//! Arm32-related facilities.
+//!
+//! This includes T variants of Arm32.
+
 use crate::use_mod;
 use_mod!(pub address);
 use_mod!(pub condition);

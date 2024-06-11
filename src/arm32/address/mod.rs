@@ -23,6 +23,7 @@ use crate::arm32::Register;
 
 use core::fmt::Display;
 
+/// An addressing mode.
 pub enum Address {
 	ArithmeticShiftRightImmediate { source: Register, shift: u32 },
 

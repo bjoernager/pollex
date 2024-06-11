@@ -1,9 +1,9 @@
 [package]
 name          = "pollex"
-version       = "0.1.1"
+version       = "0.1.2"
 authors       = ["Gabriel Bjørnager Jensen"]
 edition       = "2021"
-description   = "Arms and thumbs."
+description   = "Arm instruction manipulator."
 documentation = "https://docs.rs/pollex/"
 readme        = "README.md"
 homepage      = "https://crates.io/crates/pollex"

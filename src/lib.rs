@@ -19,6 +19,13 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
+//! Arm instruction manipulator.
+//!
+//! This library is meant to be used by assemblers and disassembler, emulators, etc.
+//! That is to leverage encoding and decoding of instructions.
+//!
+//! The goal of this project is to fully implement all Arm32 instruction set architectures, and, hopefully, Arm64 architectures as well.
+
 #![no_std]
 
 extern crate alloc;

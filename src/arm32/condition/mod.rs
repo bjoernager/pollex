@@ -21,6 +21,12 @@
 
 use core::fmt::Display;
 
+/// A condition code.
+///
+/// Most Arm32 instructions embed a condition code.
+///
+/// Any 4-bit values is always a valid condition code *except* `0b1111`, which sometimes denotes a different instruction altogether
+/// In most cases, it is invalid, however..
 #[derive(Clone, Copy, Eq, Ord, PartialEq, PartialOrd)]
 #[repr(u8)]
 pub enum Condition {
