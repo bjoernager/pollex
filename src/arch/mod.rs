@@ -19,8 +19,10 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
-mod display;
 
-pub enum Instruction {
-	Branch,
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
+#[repr(u8)]
+pub enum Arch {
+	Arm32 = 0x00,
+	Arm64 = 0x01,
 }

@@ -19,18 +19,15 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
-#![no_std]
+#[cfg(test)]
+mod test;
 
-extern crate alloc;
+mod display;
 
-pub mod arm32;
+use crate::arm32::Condition;
 
-macro_rules! use_mod {
-	($vis:vis $name:ident) => {
-		mod $name;
-		$vis use $name::*;
-	};
+pub enum Instruction {
+	Branch { condition: Condition, immediate: i32 },
+
+	BranchLink { condition: Condition, immediate: i32 },
 }
-pub(in crate) use use_mod;
-
-use_mod!(arch);

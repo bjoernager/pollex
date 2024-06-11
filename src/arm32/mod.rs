@@ -19,18 +19,8 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
-#![no_std]
-
-extern crate alloc;
-
-pub mod arm32;
-
-macro_rules! use_mod {
-	($vis:vis $name:ident) => {
-		mod $name;
-		$vis use $name::*;
-	};
-}
-pub(in crate) use use_mod;
-
-use_mod!(arch);
+use crate::use_mod;
+use_mod!(pub address);
+use_mod!(pub condition);
+use_mod!(pub instruction);
+use_mod!(pub register);

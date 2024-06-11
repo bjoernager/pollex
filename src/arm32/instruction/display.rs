@@ -19,18 +19,22 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
-#![no_std]
+use crate::arm32::Instruction;
 
-extern crate alloc;
+use core::fmt::Display;
 
-pub mod arm32;
+impl Display for Instruction {
+	fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+		use Instruction::*;
 
-macro_rules! use_mod {
-	($vis:vis $name:ident) => {
-		mod $name;
-		$vis use $name::*;
-	};
+		match *self {
+			Branch { condition, immediate } => {
+				write!(f, "B{condition} <#{immediate}>")
+			},
+
+			BranchLink { condition, immediate } => {
+				write!(f, "BL{condition} <#{immediate}>")
+			},
+		}
+	}
 }
-pub(in crate) use use_mod;
-
-use_mod!(arch);

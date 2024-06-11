@@ -3,6 +3,17 @@
 This is the changelog of Pollex.
 See `"README.md"` for more information.
 
+## 0.1.0
+
+* Bump minor
+* Add `arm32` module
+* Add `arm32::Address` type
+* Add `arm32::Condition` type
+* Add new ARM32 instructions: `BranchLink`
+* Add tests
+* Use `alloc`
+* Add `Arch` type
+
 ## 0.0.0
 
 * Fork from Luma and eAS

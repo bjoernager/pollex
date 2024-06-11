@@ -24,22 +24,22 @@ use core::fmt::Display;
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 #[repr(u8)]
 pub enum Register {
-	R0  = 0x00,
-	R1  = 0x01,
-	R2  = 0x02,
-	R3  = 0x03,
-	R4  = 0x04,
-	R5  = 0x05,
-	R6  = 0x06,
-	R7  = 0x07,
-	R8  = 0x08,
-	Sb  = 0x09, // R9
-	Sl  = 0x0A, // R10
-	R11 = 0x0B,
-	Ip  = 0x0C, // R12
-	Sp  = 0x0D, // R13
-	Lr  = 0x0E, // R14
-	Pc  = 0x0F, // R15
+	R0  = 0b0000,
+	R1  = 0b0001,
+	R2  = 0b0010,
+	R3  = 0b0011,
+	R4  = 0b0100,
+	R5  = 0b0101,
+	R6  = 0b0110,
+	R7  = 0b0111,
+	R8  = 0b1000,
+	Sb  = 0b1001, // R9
+	Sl  = 0b1010, // R10
+	R11 = 0b1011,
+	Ip  = 0b1100, // R12
+	Sp  = 0b1101, // R13
+	Lr  = 0b1110, // R14
+	Pc  = 0b1111, // R15
 }
 
 impl Display for Register {

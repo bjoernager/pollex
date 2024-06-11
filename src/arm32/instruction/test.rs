@@ -19,16 +19,21 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
-use crate::Instruction;
+use crate::arm32::{Condition, Instruction};
 
-use core::fmt::Display;
+use alloc::format;
 
-impl Display for Instruction {
-	fn fmt(&self, _f: &mut core::fmt::Formatter) -> core::fmt::Result {
-		use Instruction::*;
+#[test]
+fn test_arm32_instruction() {
+	let assert_display = |instruction: Instruction, display: &str| {
+		assert_eq!(format!("{instruction}"), display);
+	};
 
-		match *self {
-			Branch => todo!(),
-		}
-	}
+	assert_display(
+		Instruction::BranchLink {
+			condition: Condition::HigherOrSame,
+			immediate: 0xF,
+		},
+		"BLHS <#15>",
+	);
 }
