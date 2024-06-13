@@ -1,4 +1,4 @@
-// Copyright 2021-2024 Gabriel Bjørnager Jensen.
+// Copyright 2024 Gabriel Bjørnager Jensen.
 //
 // This file is part of Pollex.
 //
@@ -28,13 +28,29 @@ impl Display for Instruction {
 		use Instruction::*;
 
 		match *self {
-			Branch { condition, immediate } => {
-				write!(f, "B{condition} <#{immediate}>")
-			},
+			Add { predicate, destination, base, source, s }
+			=> write!(f, "ADD{predicate}{s} {destination}, {base}, {source}"),
 
-			BranchLink { condition, immediate } => {
-				write!(f, "BL{condition} <#{immediate}>")
-			},
+			Branch { predicate, immediate }
+			=> write!(f, "B{predicate} <{immediate}>"),
+
+			BranchExchange { predicate, register }
+			=> write!(f, "BX{predicate} {register}"),
+
+			BranchLink { predicate, immediate }
+			=> write!(f, "BL{predicate} <{immediate}>"),
+
+			Breakpoint { immediate }
+			=> write!(f, "BKPT {immediate}"),
+
+			Move { predicate, destination, source, s }
+			=> write!(f, "MOV{predicate}{s} {destination}, {source}"),
+
+			MoveNegated { predicate, destination, source, s }
+			=> write!(f, "MVN{predicate}{s} {destination}, {source}"),
+
+			SoftwareInterrupt { predicate, immediate }
+			=> write!(f, "SWI{predicate} {immediate}"),
 		}
 	}
 }

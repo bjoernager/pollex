@@ -19,26 +19,32 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
-//! Arm instruction manipulator.
-//!
-//! This library is meant to be used by assemblers and disassembler, emulators, etc.
-//! That is to leverage encoding and decoding of instructions.
-//!
-//! The goal of this project is to fully implement all Arm32 instruction set architectures, and, hopefully, Arm64 architectures as well.
+use core::fmt::Display;
 
-#![no_std]
-
-extern crate alloc;
-
-pub mod arm32;
-
-macro_rules! use_mod {
-	($vis:vis $name:ident) => {
-		mod $name;
-		$vis use $name::*;
-	};
+/// A flag.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(u8)]
+pub enum Flag<const C: char> {
+	Off = 0x0,
+	On  = 0x1,
 }
-pub(in crate) use use_mod;
 
-use_mod!(pub arch);
-use_mod!(pub error);
+impl<const C: char> Flag<C> {
+	#[inline(always)]
+	#[must_use]
+	pub const fn is_off(self) -> bool { self as u8 == Self::Off as u8 }
+
+	#[inline(always)]
+	#[must_use]
+	pub const fn is_on(self) -> bool { self as u8 == Self::On as u8 }
+}
+
+impl<const C: char> Display for Flag<C> {
+	fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+		if self.is_on() {
+			write!(f, "{C}")?;
+		}
+
+		Ok(())
+	}
+}

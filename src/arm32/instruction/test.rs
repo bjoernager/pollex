@@ -1,4 +1,4 @@
-// Copyright 2021-2024 Gabriel Bjørnager Jensen.
+// Copyright 2024 Gabriel Bjørnager Jensen.
 //
 // This file is part of Pollex.
 //
@@ -19,21 +19,72 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
-use crate::arm32::{Condition, Instruction};
+use crate::arm32::{
+	Predicate,
+	Flag,
+	Instruction,
+	Register,
+	Shifter,
+	Signed,
+	Unsigned,
+};
 
 use alloc::format;
+use alloc::vec::Vec;
 
 #[test]
 fn test_arm32_instruction() {
-	let assert_display = |instruction: Instruction, display: &str| {
-		assert_eq!(format!("{instruction}"), display);
-	};
-
-	assert_display(
+	let tree = [
 		Instruction::BranchLink {
-			condition: Condition::HigherOrSame,
-			immediate: 0xF,
+			predicate: Predicate::HigherOrSame,
+			immediate: Signed::new(0x1F),
 		},
-		"BLHS <#15>",
+
+		Instruction::Breakpoint {
+			immediate: Unsigned::new(0x45),
+		},
+
+		Instruction::SoftwareInterrupt {
+			predicate: Predicate::Always,
+			immediate: Unsigned::new(0x54),
+		},
+
+		Instruction::Move {
+			predicate:   Predicate::Plus,
+			destination: Register::Pc,
+			source:      Shifter::ArithmeticShiftRightImmediate { source: Register::R3, shift: Unsigned::new(0x20) },
+			s:           Flag::On,
+		},
+	];
+
+	let mut displays = Vec::with_capacity(tree.len());
+	let mut opcodes  = Vec::with_capacity(tree.len());
+
+	for instruction in tree {
+		displays.push(format!("{instruction}"));
+		opcodes.push(instruction.encode_arm().unwrap());
+	}
+
+	assert_eq!(
+		displays,
+		[
+			"BLHS <#+31>",
+			"BKPT #69",
+			"SWI #84",
+			"MOVPLS pc, r3, ASR #32",
+		],
 	);
+
+	assert_eq!(
+		opcodes,
+		[
+			0b00101010_00000000_00000000_00000000,
+			0b11100001_00100000_00000100_01110101,
+			0b11101111_00000000_00000000_01010100,
+			0b01010001_10110000_11110000_01000011,
+		],
+	)
 }
+
+// 01010001101100001111000001000011
+// 01010001101100001111000001000011

@@ -3,6 +3,22 @@
 This is the changelog of Pollex.
 See `"README.md"` for more information.
 
+## 0.2.0
+
+* Bump minor
+* Update copyright years
+* Add new Arm32 instructions: `SoftwareInterrupt`, `Move`, `BranchExchange`, `Breakpoint`, `MoveNegated`, `Add`
+* Derive more
+* Add `arm32::Flag`, `arm32::Unsigned`, and `arm32::Signed` types
+* Add instruction encoder (currently only for Arm)
+* Add `arm32::ArmOpcode` and `arm32::ThumbOpcode` types
+* Rename `arm32::Address` to `arm32::Shifter`
+* Add `Error` type
+* Rework instructions
+* Update readme
+* Rename `arm32::Condition` to `arm32::Predicate`
+* Update documentation
+
 ## 0.1.2
 
 * Update project description

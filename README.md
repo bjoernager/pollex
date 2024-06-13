@@ -6,7 +6,7 @@ See [Docs.rs](https://docs.rs/pollex/) for documentation.
 
 ## Copyright & Licensing
 
-Copyright 2021-2024 Gabriel Bjørnager Jensen.
+Copyright 2024 Gabriel Bjørnager Jensen.
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
@@ -16,4 +16,4 @@ You should have received a copy of the GNU Affero General Public License along w
 
 ## Trademarks
 
-Arm is a registered trademark of Arm Limited (or its subsidiaries or affiliates).
+Arm and Thumb are registered trademarks or trademarks of Arm Limited (or its subsidiaries or affiliates).

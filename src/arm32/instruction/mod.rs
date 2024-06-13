@@ -1,4 +1,4 @@
-// Copyright 2021-2024 Gabriel Bjørnager Jensen.
+// Copyright 2024 Gabriel Bjørnager Jensen.
 //
 // This file is part of Pollex.
 //
@@ -23,12 +23,56 @@
 mod test;
 
 mod display;
+mod encode_arm;
 
-use crate::arm32::Condition;
+use crate::arm32::{
+	Predicate,
+	Flag,
+	Register,
+	Shifter,
+	Signed,
+	Unsigned,
+};
 
 /// An Arm32 instruction.
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Instruction {
-	Branch { condition: Condition, immediate: i32 },
+	Add {
+		predicate:   Predicate,
+		destination: Register,
+		base:        Register,
+		source:      Shifter,
+		s:           Flag<'S'> },
 
-	BranchLink { condition: Condition, immediate: i32 },
+	Branch {
+		predicate: Predicate,
+		immediate: Signed },
+
+	BranchExchange {
+		predicate: Predicate,
+		register:  Register },
+
+	BranchLink {
+		predicate: Predicate,
+		immediate: Signed
+	},
+
+	Breakpoint {
+		immediate: Unsigned },
+
+	Move {
+		predicate:   Predicate,
+		destination: Register,
+		source:      Shifter,
+		s:           Flag<'S'> },
+
+	MoveNegated {
+		predicate:   Predicate,
+		destination: Register,
+		source:      Shifter,
+		s:           Flag<'S'> },
+
+	SoftwareInterrupt {
+		predicate: Predicate,
+		immediate: Unsigned },
 }

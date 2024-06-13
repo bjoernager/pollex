@@ -1,4 +1,4 @@
-// Copyright 2021-2024 Gabriel Bjørnager Jensen.
+// Copyright 2024 Gabriel Bjørnager Jensen.
 //
 // This file is part of Pollex.
 //
@@ -23,8 +23,9 @@ use core::fmt::Display;
 
 /// An Arm register.
 ///
-/// Registers are number `R<N>`, where *N* denotes a decimal number from (0) to (15).
-/// Some registers have aliases, such as `r15|pc`.
+/// Some opcodes can only encode specific registers.
+/// For example, many Thumb instructions only accept registers from `r0` to `r7` (the so-called *low* registers).
+/// Other opcodes only encode a single register (which is then inferred from the opcode in question).
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 #[repr(u8)]
 pub enum Register {

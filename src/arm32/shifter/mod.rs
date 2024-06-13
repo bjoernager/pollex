@@ -1,4 +1,4 @@
-// Copyright 2021-2024 Gabriel Bjørnager Jensen.
+// Copyright 2024 Gabriel Bjørnager Jensen.
 //
 // This file is part of Pollex.
 //
@@ -19,50 +19,53 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
-use crate::arm32::Register;
+use crate::arm32::{Register, Unsigned};
 
 use core::fmt::Display;
 
-/// An addressing mode.
-pub enum Address {
-	ArithmeticShiftRightImmediate { source: Register, shift: u32 },
+/// A shifter operand.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Shifter {
+	ArithmeticShiftRightImmediate { source: Register, shift: Unsigned },
 
 	ArithmeticShiftRightRegister { source: Register, shift: Register },
 
-	Immediage { immediate: u32 },
+	Immediate { immediate: Unsigned },
 
-	LogicalShiftLeftImmediate { source: Register, shift: u32 },
+	LogicalShiftLeftImmediate { source: Register, shift: Unsigned },
 
 	LogicalShiftLeftRegister { source: Register, shift: Register },
 
-	LogicalShiftRightImmediate { source: Register, shift: u32 },
+	LogicalShiftRightImmediate { source: Register, shift: Unsigned },
 
 	LogicalShiftRightRegister { source: Register, shift: Register },
 
 	RotateRightExtend { source: Register },
 
+	RotateRightImmediate { source: Register, shift: Unsigned },
+
 	RotateRightRegister { source: Register, shift: Register },
 }
 
-impl Display for Address {
+impl Display for Shifter {
 	fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-		use Address::*;
+		use Shifter::*;
 
 		match *self {
 			ArithmeticShiftRightImmediate { source, shift } => {
-				write!(f, "{source}, ASR #{shift}")
+				write!(f, "{source}, ASR {shift}")
 			},
 
 			ArithmeticShiftRightRegister { source, shift } => {
 				write!(f, "{source}, ASR {shift}")
 			},
 
-			Immediage { immediate } => {
+			Immediate { immediate } => {
 				write!(f, "#{immediate}<")
 			},
 
 			LogicalShiftLeftImmediate { source, shift } => {
-				write!(f, "{source}, LSL #{shift}")
+				write!(f, "{source}, LSL {shift}")
 			},
 
 			LogicalShiftLeftRegister { source, shift } => {
@@ -70,7 +73,7 @@ impl Display for Address {
 			},
 
 			LogicalShiftRightImmediate { source, shift } => {
-				write!(f, "{source}, LSR #{shift}")
+				write!(f, "{source}, LSR {shift}")
 			},
 
 			LogicalShiftRightRegister { source, shift } => {
@@ -79,6 +82,10 @@ impl Display for Address {
 
 			RotateRightExtend { source } => {
 				write!(f, "{source}, RRX")
+			},
+
+			RotateRightImmediate { source, shift } => {
+				write!(f, "{source}, ROR {shift}")
 			},
 
 			RotateRightRegister { source, shift } => {

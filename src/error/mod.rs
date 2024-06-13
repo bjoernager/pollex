@@ -19,26 +19,31 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
-//! Arm instruction manipulator.
-//!
-//! This library is meant to be used by assemblers and disassembler, emulators, etc.
-//! That is to leverage encoding and decoding of instructions.
-//!
-//! The goal of this project is to fully implement all Arm32 instruction set architectures, and, hopefully, Arm64 architectures as well.
+use core::fmt::{Display, Formatter};
 
-#![no_std]
+/// Wrapping of [`core::result::Result`].
+pub type Result<T> = core::result::Result<T, Error>;
 
-extern crate alloc;
+/// A crate error.
+#[derive(Clone, Debug)]
+pub enum Error {
+	ImmediateTooLarge,
 
-pub mod arm32;
-
-macro_rules! use_mod {
-	($vis:vis $name:ident) => {
-		mod $name;
-		$vis use $name::*;
-	};
+	InvalidImmediateValue,
 }
-pub(in crate) use use_mod;
 
-use_mod!(pub arch);
-use_mod!(pub error);
+impl Display for Error {
+	fn fmt(&self, f: &mut Formatter) -> core::fmt::Result {
+		use Error::*;
+
+		let message = match *self {
+			ImmediateTooLarge => "immediate too large",
+
+			InvalidImmediateValue => "invalid immediate value",
+		};
+
+		f.write_str(message)
+	}
+}
+
+impl core::error::Error for Error { }

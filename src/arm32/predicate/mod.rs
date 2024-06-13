@@ -1,4 +1,4 @@
-// Copyright 2021-2024 Gabriel Bjørnager Jensen.
+// Copyright 2024 Gabriel Bjørnager Jensen.
 //
 // This file is part of Pollex.
 //
@@ -21,15 +21,15 @@
 
 use core::fmt::Display;
 
-/// A condition code.
+/// An instruction predicate (condition code).
 ///
-/// Most Arm32 instructions embed a condition code.
+/// Most Arm32 opcodes embed a condition code, as well as some Thumb opcodes.
 ///
-/// Any 4-bit values is always a valid condition code *except* `0b1111`, which sometimes denotes a different instruction altogether
+/// Any 4-bit values is always a valid predicate *except* `0b1111`, which sometimes denotes a different instruction altogether
 /// In most cases, it is invalid, however..
-#[derive(Clone, Copy, Eq, Ord, PartialEq, PartialOrd)]
+#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 #[repr(u8)]
-pub enum Condition {
+pub enum Predicate {
 	Equal              = 0b0000,
 	NotEqual           = 0b0001,
 	HigherOrSame       = 0b0010,
@@ -48,9 +48,9 @@ pub enum Condition {
 	//Never              = 0b1111,
 }
 
-impl Display for Condition {
+impl Display for Predicate {
 	fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-		use Condition::*;
+		use Predicate::*;
 
 		match *self {
 			Equal              => write!(f, "EQ"),
@@ -67,7 +67,7 @@ impl Display for Condition {
 			LessThan           => write!(f, "LT"),
 			GreaterThan        => write!(f, "GT"),
 			LessThanOrEqual    => write!(f, "LE"),
-			Always             => write!(f, "AL"),
+			Always             => Ok(()), // No need to print this one.
 			//Never              => write!(f, "NV"),
 		}
 	}
