@@ -23,13 +23,14 @@
 mod test;
 
 mod encode_arm;
+mod encode_thumb;
 
 use core::num::Wrapping;
 
 /// Codec for encoding and decoding instruction.
 ///
 /// Arm instructions can be encoded/decoded using the [`encode_arm`](InstructionCodec::encode_arm) and `decode_arm` (soon).
-/// Thumb instruction will similarly be manipulated using `encode_thumb` and `decode_thumb`.
+/// Thumb instruction will similarly be manipulated using [`encode_thumb`](InstructionCodec::encode_thumb) and `decode_thumb`.
 ///
 /// This structure keeps track of the adress at which instructions are to be placed (see *Rationale*).
 /// If encoding causes this internal address to go past `0xFFFFFFFF`, the value is safely wrapped to the origin (i.e. `0x00000000`).

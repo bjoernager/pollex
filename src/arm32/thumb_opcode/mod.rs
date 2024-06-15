@@ -27,6 +27,9 @@ use core::fmt::{Debug, Display, Formatter};
 pub struct ThumbOpcode(u16);
 
 impl ThumbOpcode {
+	/// The size of any Thumb opcode, in bytes.
+	///
+	/// This value is not including `BL` prefixes and suffixes, which count as two opcodes in total.
 	pub const SIZE: u32 = 0x2;
 
 	/// Creates a new opcode from a primitive.

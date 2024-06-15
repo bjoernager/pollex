@@ -19,9 +19,6 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
-/// An Arm architecture.
-#[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
-pub enum Arch {
-	Arm32,
-	Arm64,
-}
+//! Arm64-related facilities.
+//!
+//! This module is currently empty.

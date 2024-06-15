@@ -19,7 +19,7 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
-use crate::Result;
+use crate::{assert_or_err, Error, Result};
 use crate::arm32::{
 	ArmOpcode,
 	Instruction,
@@ -36,35 +36,51 @@ impl InstructionCodec {
 	pub fn encode_arm(&mut self, instruction: Instruction) -> Result<ArmOpcode> {
 		use Instruction::*;
 
-		let mut opcode = 0b00000000_00000000_00000000_00000000;
+		let mut opcode = 0b00000000_00000000_00000000_00000000_u32;
 
 		match instruction {
-			Branch { predicate, .. } => {
+			Branch {
+				predicate,
+				..
+			} => {
 				opcode |= 0b00001011_00000000_00000000_00000000;
 				opcode |= (predicate as u32) << 0x1C;
 			},
 
-			BranchLink { predicate, .. } => {
+			BranchLink {
+				predicate,
+				..
+			} => {
 				opcode |= 0b00001010_00000000_00000000_00000000;
 				opcode |= (predicate as u32) << 0x1C;
 			},
 
-			Breakpoint { immediate } => {
+			Breakpoint {
+				immediate,
+			} => {
 				opcode |= 0b11100001_00100000_00000000_01110000;
 				opcode |= immediate & 0b00000000_00000000_00000000_00001111;
 				opcode |= (immediate & 0b00000000_00000000_11111111_11110000) << 0x4;
 			},
 
-			Move { predicate, destination, source, s } => {
+			Move {
+				predicate,
+				destination,
+				source,
+				s,
+			} => {
 				opcode |= 0b00000001_10100000_00000000_00000000;
 				opcode |= (destination as u32) << 0xC;
 				opcode |= u32::from(s) << 0x14;
 				opcode |= (predicate as u32) << 0x1C;
 
-				opcode = add_shifter(opcode, source);
+				opcode = add_shifter(opcode, source)?;
 			},
 
-			SoftwareInterrupt { predicate, immediate } => {
+			SoftwareInterrupt {
+				predicate,
+				immediate,
+			} => {
 				opcode |= 0b00001111_00000000_00000000_00000000;
 				opcode |= immediate & 0b00000000_11111111_11111111_11111111;
 				opcode |= (predicate as u32) << 0x1C;
@@ -78,41 +94,50 @@ impl InstructionCodec {
 	}
 }
 
-fn add_shifter(mut opcode: u32, shifter: Shifter) -> u32 {
+fn add_shifter(mut opcode: u32, shifter: Shifter) -> Result<u32> {
+	use Shifter::*;
+
 	match shifter {
-		| Shifter::ArithmeticShiftRightImmediate { source, shift }
-		| Shifter::LogicalShiftLeftImmediate { source, shift }
-		| Shifter::LogicalShiftRightImmediate { source, shift }
-		| Shifter::RotateRightImmediate { source, shift }
+		LogicalShiftLeftImmediate { source, shift: 0x0 }
+		=> {
+			opcode |= source as u32;
+		},
+
+		| ArithmeticShiftRightImmediate { source, shift }
+		| LogicalShiftLeftImmediate { source, shift }
+		| LogicalShiftRightImmediate { source, shift }
+		| RotateRightImmediate { source, shift }
 		=> {
 			let code = match shifter {
-				Shifter::LogicalShiftLeftImmediate { .. }     => 0b00,
-				Shifter::LogicalShiftRightImmediate { .. }    => 0b01,
-				Shifter::ArithmeticShiftRightImmediate { .. } => 0b10,
-				Shifter::RotateRightImmediate { .. }          => 0b11,
+				LogicalShiftLeftImmediate { .. }     => 0b00,
+				LogicalShiftRightImmediate { .. }    => 0b01,
+				ArithmeticShiftRightImmediate { .. } => 0b10,
+				RotateRightImmediate { .. }          => 0b11,
 
 				_ => unreachable!(),
 			};
+
+			assert_or_err!(shift != 0x0, Error::IllegalImmediate);
 
 			opcode |= source as u32;
 			opcode |= code << 0x5;
 			opcode |= shift << 0x7;
 		},
 
-		Shifter::RotateRightExtend { .. } => {
+		RotateRightExtend { .. } => {
 			todo!()
 		},
 
-		| Shifter::ArithmeticShiftRightRegister { source, .. }
-		| Shifter::LogicalShiftLeftRegister { source, .. }
-		| Shifter::LogicalShiftRightRegister { source, .. }
-		| Shifter::RotateRightRegister { source, .. }
+		| ArithmeticShiftRightRegister { source, .. }
+		| LogicalShiftLeftRegister { source, .. }
+		| LogicalShiftRightRegister { source, .. }
+		| RotateRightRegister { source, .. }
 		=> {
 			let _code = match shifter {
-				Shifter::LogicalShiftLeftRegister { .. }     => 0b00,
-				Shifter::LogicalShiftRightRegister { .. }    => 0b01,
-				Shifter::ArithmeticShiftRightRegister { .. } => 0b10,
-				Shifter::RotateRightRegister { .. }          => 0b11,
+				LogicalShiftLeftRegister { .. }     => 0b00,
+				LogicalShiftRightRegister { .. }    => 0b01,
+				ArithmeticShiftRightRegister { .. } => 0b10,
+				RotateRightRegister { .. }          => 0b11,
 
 				_ => unreachable!(),
 			};
@@ -121,18 +146,18 @@ fn add_shifter(mut opcode: u32, shifter: Shifter) -> u32 {
 			opcode |= source as u32;
 		},
 
-		Shifter::Immediate { immediate } => {
-			let (immediate, rotate) = if immediate <= 0xFF {
-				(immediate, 0x00)
+		Immediate { source } => {
+			let (source, rotate) = if source <= 0xFF {
+				(source, 0x00)
 			} else {
 				todo!()
 			};
 
 			opcode |= 0b00000010_00000000_00000000_00000000;
-			opcode |= immediate;
+			opcode |= source;
 			opcode |= rotate << 0x8;
 		},
 	}
 
-	opcode
+	Ok(opcode)
 }

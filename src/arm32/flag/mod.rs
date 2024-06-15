@@ -19,6 +19,11 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
+// TODO: This type is usefule for easily being for-
+// matted, but is otherwise quite akwardly imple-
+// mented (see the constant generic). Could we re-
+// it?
+
 use core::fmt::Display;
 
 /// A flag.
@@ -30,10 +35,12 @@ pub enum Flag<const C: char> {
 }
 
 impl<const C: char> Flag<C> {
+	/// Checks if the flag is off.
 	#[inline(always)]
 	#[must_use]
 	pub const fn is_off(self) -> bool { self as u8 == Self::Off as u8 }
 
+	/// Checks if the flag is on.
 	#[inline(always)]
 	#[must_use]
 	pub const fn is_on(self) -> bool { self as u8 == Self::On as u8 }

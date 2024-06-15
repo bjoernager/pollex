@@ -52,7 +52,7 @@ fn test_arm32_instruction() {
 			predicate:   Predicate::Always,
 			destination: Register::R7,
 			base:        Register::R8,
-			source:      Shifter::LogicalShiftLeftImmediate { source: Register::Sb, shift: 0x0 },
+			source:      Shifter::LogicalShiftLeftImmediate { source: Register::R9, shift: 0x0 },
 			s:           Flag::On,
 		},
 
@@ -62,6 +62,13 @@ fn test_arm32_instruction() {
 			base:        Register::Pc,
 			source:      Register::Pc,
 			shift:       Register::Lr,
+			s:           Flag::Off,
+		},
+
+		Instruction::Move {
+			predicate:   Predicate::NotEqual,
+			destination: Register::R0,
+			source:      Shifter::LogicalShiftLeftImmediate { source: Register::Pc, shift: 0x0 },
 			s:           Flag::Off,
 		},
 	];
@@ -74,8 +81,9 @@ fn test_arm32_instruction() {
 		[
 			"ADDGE r1, r2, r3, ROR #2",
 			"QSUBLT r4, r5, r6",
-			"ORRS r7, r8, sb",
+			"ORRS r7, r8, r9",
 			"MLAEQ r0, pc, pc, lr",
+			"CPYNE r0, pc"
 		],
 	);
 }

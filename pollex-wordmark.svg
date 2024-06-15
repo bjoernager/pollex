@@ -1,0 +1,47 @@
+<!-- Copyright 2024 Gabriel Bjørnager Jensen. -->
+
+<!--
+	This work is licensed under Creative Commons At-
+	tribution-NoDerivatives 4.0 International. To
+	view a copy of this license, visit:
+
+	<https://creativecommons.org/licenses/by-nd/4.0/>
+-->
+
+<svg height="112" width="256" xmlns="http://www.w3.org/2000/svg">
+	<!-- gradients: -->
+
+	<!-- clips: -->
+
+	<!-- masks: -->
+
+	<mask id="z">
+		<polygon fill="white" points="16,16 68,16 68,40 32,40 32,48 16,48" />
+		<circle cx="68" cy="28" fill="white" r="12" />
+
+		<polygon fill="black" points="32,24 60,24 60,32 32,32" />
+		<circle cx="60" cy="28" fill="black" r="4" />
+
+		<polygon fill="white" points="104,16 152,16 160,24 160,40 152,48 104,48 96,40 96,24" />
+		<circle cx="104" cy="24" fill="white" r="8" />
+		<circle cx="152" cy="24" fill="white" r="8" />
+		<circle cx="152" cy="40" fill="white" r="8" />
+		<circle cx="104" cy="40" fill="white" r="8" />
+
+		<polygon fill="black" points="112,24 144,24 144,40 112,40" />
+
+		<polygon fill="white" points="176,16 192,16 192,40 240,40 240,48 176,48" />
+
+		<polygon fill="white" points="16,64 32,64 32,88 80,88 80,96 16,96" />
+
+		<polygon fill="white" points="96,64 160,64 160,72 112,72 112,76 144,76 144,84 112,84 112,88 160,88 160,96 96,96" />
+
+		<polygon fill="white" points="176,64 192,64 240,96 224,96" />
+		<polygon fill="white" points="224,64 240,64 192,96 176,96" />
+	</mask>
+
+	<!-- fills: -->
+
+	<rect fill="#4D4084" height="112" width="496" x="0" y="0" /> <!-- 7672 C -->
+	<rect fill="#FFFFFF" mask="url(#z)" height="112" width="496" x="0" y="0" />
+</svg>

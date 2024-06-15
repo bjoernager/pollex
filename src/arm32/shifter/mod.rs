@@ -50,7 +50,7 @@ pub enum Shifter {
 
 	ArithmeticShiftRightRegister { source: Register, shift: Register },
 
-	Immediate { immediate: u32 },
+	Immediate { source: u32 },
 
 	LogicalShiftLeftImmediate { source: Register, shift: u32 },
 
@@ -80,8 +80,8 @@ impl Display for Shifter {
 				write!(f, "{source}, ASR {shift}")
 			},
 
-			Immediate { immediate } => {
-				write!(f, "#{immediate}<")
+			Immediate { source } => {
+				write!(f, "#{source}")
 			},
 
 			LogicalShiftLeftImmediate { source, shift: 0x0 } => {

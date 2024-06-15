@@ -27,9 +27,23 @@ pub type Result<T> = core::result::Result<T, Error>;
 /// A crate error.
 #[derive(Clone, Debug)]
 pub enum Error {
-	ImmediateTooLarge,
+	/// The given immediate cannot be encoded.
+	IllegalImmediate,
 
-	InvalidImmediateValue,
+	/// The given instruction cannot be encoded.
+	///
+	/// Even valid instructions are not valid in *every* case.
+	/// For example, most shifter operands and instruction predicates are **not** allowed in a Thumb context (with exceptions).
+	IllegalInstruction,
+
+	/// The given instruction predicate cannot be encoded.
+	IllegalPredicate,
+
+	/// The given register can currently not be used.
+	IllegalRegister,
+
+	/// Register name is not known.
+	UnknownRegister,
 }
 
 impl Display for Error {
@@ -37,9 +51,15 @@ impl Display for Error {
 		use Error::*;
 
 		let message = match *self {
-			ImmediateTooLarge => "immediate too large",
+			IllegalImmediate => "illegal immediate value",
 
-			InvalidImmediateValue => "invalid immediate value",
+			IllegalInstruction => "illegal instruction",
+
+			IllegalPredicate => "illegal instruction predicate",
+
+			IllegalRegister => "register not permitted here",
+
+			UnknownRegister => "unknown register",
 		};
 
 		f.write_str(message)

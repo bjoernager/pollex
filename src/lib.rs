@@ -31,6 +31,7 @@
 extern crate alloc;
 
 pub mod arm32;
+pub mod arm64;
 
 macro_rules! use_mod {
 	($vis:vis $name:ident) => {
@@ -40,5 +41,11 @@ macro_rules! use_mod {
 }
 pub(in crate) use use_mod;
 
-use_mod!(pub arch);
 use_mod!(pub error);
+
+#[macro_export]
+macro_rules! assert_or_err {
+	($predicate:expr, $error:expr) => {{
+		if !($predicate) { return Err($error) };
+	}};
+}

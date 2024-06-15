@@ -27,6 +27,7 @@ use core::fmt::{Debug, Display, Formatter};
 pub struct ArmOpcode(u32);
 
 impl ArmOpcode {
+	/// The size of any Arm opcode, in bytes.
 	pub const SIZE: u32 = 0x4;
 
 	/// Creates a new opcode from a primitive.

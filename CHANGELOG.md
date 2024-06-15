@@ -3,6 +3,28 @@
 This is the changelog of Pollex.
 See `"README.md"` for more information.
 
+## 0.4.0
+
+* Bump minor version
+* Add logo
+* Add more errors
+* Add macro `assert_or_err`
+* Document errors
+* Remove `Arch`
+
+### Arm32
+
+* Add `encode_thumb` method to `InstructionCodec`
+* Add `is_low` and `is_high` methods to `Register`
+* Implement `FromStr` for `Register`
+* Rename `Sb`, `Sl`, and `Ip` in `Register` to `R9`, `R10`, and `R12`
+* Display instruction synonyms
+* Document `Flag`
+
+### Arm64
+
+* Add module
+
 ## 0.3.0
 
 * Bump minor
