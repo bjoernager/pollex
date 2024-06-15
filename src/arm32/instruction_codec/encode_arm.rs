@@ -20,15 +20,25 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 use crate::Result;
-use crate::arm32::{ArmOpcode, Instruction, Shifter};
+use crate::arm32::{
+	ArmOpcode,
+	Instruction,
+	InstructionCodec,
+	Shifter,
+};
 
-impl Instruction {
-	pub fn encode_arm(&self) -> Result<ArmOpcode> {
+impl InstructionCodec {
+	/// Encodes the given Arm instruction.
+	///
+	/// # Errors
+	///
+	/// If the operands of the provided instruction cannot be encoded in the given combination, or are incompatible with the mnemonic, an error is returned.
+	pub fn encode_arm(&mut self, instruction: Instruction) -> Result<ArmOpcode> {
 		use Instruction::*;
 
 		let mut opcode = 0b00000000_00000000_00000000_00000000;
 
-		match *self {
+		match instruction {
 			Branch { predicate, .. } => {
 				opcode |= 0b00001011_00000000_00000000_00000000;
 				opcode |= (predicate as u32) << 0x1C;
@@ -37,19 +47,18 @@ impl Instruction {
 			BranchLink { predicate, .. } => {
 				opcode |= 0b00001010_00000000_00000000_00000000;
 				opcode |= (predicate as u32) << 0x1C;
-				//opcode |= immediate.to_bits::<0x18>() >> 0x8
 			},
 
 			Breakpoint { immediate } => {
 				opcode |= 0b11100001_00100000_00000000_01110000;
-				opcode |= immediate.get() & 0b00000000_00000000_00000000_00001111;
-				opcode |= (immediate.get() & 0b00000000_00000000_11111111_11110000) << 0x4;
+				opcode |= immediate & 0b00000000_00000000_00000000_00001111;
+				opcode |= (immediate & 0b00000000_00000000_11111111_11110000) << 0x4;
 			},
 
 			Move { predicate, destination, source, s } => {
 				opcode |= 0b00000001_10100000_00000000_00000000;
 				opcode |= (destination as u32) << 0xC;
-				opcode |= u32::from(s.is_on()) << 0x14;
+				opcode |= u32::from(s) << 0x14;
 				opcode |= (predicate as u32) << 0x1C;
 
 				opcode = add_shifter(opcode, source);
@@ -57,14 +66,15 @@ impl Instruction {
 
 			SoftwareInterrupt { predicate, immediate } => {
 				opcode |= 0b00001111_00000000_00000000_00000000;
-				opcode |= immediate.get() & 0b00000000_11111111_11111111_11111111;
+				opcode |= immediate & 0b00000000_11111111_11111111_11111111;
 				opcode |= (predicate as u32) << 0x1C;
 			},
 
 			_ => todo!(),
 		}
 
-		Ok(ArmOpcode::from_u32(opcode))
+		self.address += ArmOpcode::SIZE;
+		Ok(opcode.into())
 	}
 }
 
@@ -86,7 +96,7 @@ fn add_shifter(mut opcode: u32, shifter: Shifter) -> u32 {
 
 			opcode |= source as u32;
 			opcode |= code << 0x5;
-			opcode |= shift.get() << 0x7;
+			opcode |= shift << 0x7;
 		},
 
 		Shifter::RotateRightExtend { .. } => {
@@ -113,8 +123,6 @@ fn add_shifter(mut opcode: u32, shifter: Shifter) -> u32 {
 
 		Shifter::Immediate { immediate } => {
 			let (immediate, rotate) = if immediate <= 0xFF {
-				let immediate = immediate.get();
-
 				(immediate, 0x00)
 			} else {
 				todo!()

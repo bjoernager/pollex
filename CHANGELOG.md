@@ -3,6 +3,20 @@
 This is the changelog of Pollex.
 See `"README.md"` for more information.
 
+## 0.3.0
+
+* Bump minor
+* Add `arm32::InstructionCodec`
+* Remove `arm32::Unsigned` and `arm32::Signed`
+* Add `SIZE` constant to `arm32::ArmOpcode` and `arm32::ThumbOpcode`
+* Implement `From<u32>` and `Into<u32>` for `ArmOpcode`
+* Implement `From<u16>` and `Into<u16>` for `ThumbOpcode`
+* Update documentation
+* Add new Arm32 instructions: `AddCarry`, `And`, `BitClear`, `CountLeadingZeroes`, `CompareNegated` `Compare`, `ExclusiveOr`, `MultiplyAccumulate`, `Multiply`, `InclusiveOr`, `SaturatingAdd`, `SaturatingSubtract`, `Reverse`, `ReverseSubtract`, `ReverseSubtractCarry`, `Subtract`, `SubtractCarry`,
+* Rename `MoveNegated` in `arm32::Instruction` to `MoveNot`
+* Implement `Into<bool>`, `Into<u8>`, `Into<u16>`, `Into<u32>`, `Into<u64>`, `Into<u128>`, and `Into<usize>` for `Flag`
+* Implement `From<bool>` for `Flag`
+
 ## 0.2.0
 
 * Bump minor

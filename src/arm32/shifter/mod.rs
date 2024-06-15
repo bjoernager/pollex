@@ -19,30 +19,50 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
-use crate::arm32::{Register, Unsigned};
+use crate::arm32::Register;
 
 use core::fmt::Display;
 
 /// A shifter operand.
+///
+/// Some Arm instructions take these to minimise instruction usage.
+/// For example, the following code:
+///
+/// ```as
+/// LSL r1, r1, #2
+/// ADD r0, r1
+/// ```
+///
+/// is functionally equivalent to:
+///
+/// ```as
+/// ADD r0, r1, LSL #2
+/// ```
+///
+/// In fact, the first example will encode identically to the following:
+///
+/// ```as
+/// MOV r1, r1, LSL #2
+/// ```
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Shifter {
-	ArithmeticShiftRightImmediate { source: Register, shift: Unsigned },
+	ArithmeticShiftRightImmediate { source: Register, shift: u32 },
 
 	ArithmeticShiftRightRegister { source: Register, shift: Register },
 
-	Immediate { immediate: Unsigned },
+	Immediate { immediate: u32 },
 
-	LogicalShiftLeftImmediate { source: Register, shift: Unsigned },
+	LogicalShiftLeftImmediate { source: Register, shift: u32 },
 
 	LogicalShiftLeftRegister { source: Register, shift: Register },
 
-	LogicalShiftRightImmediate { source: Register, shift: Unsigned },
+	LogicalShiftRightImmediate { source: Register, shift: u32 },
 
 	LogicalShiftRightRegister { source: Register, shift: Register },
 
 	RotateRightExtend { source: Register },
 
-	RotateRightImmediate { source: Register, shift: Unsigned },
+	RotateRightImmediate { source: Register, shift: u32 },
 
 	RotateRightRegister { source: Register, shift: Register },
 }
@@ -53,7 +73,7 @@ impl Display for Shifter {
 
 		match *self {
 			ArithmeticShiftRightImmediate { source, shift } => {
-				write!(f, "{source}, ASR {shift}")
+				write!(f, "{source}, ASR #{shift}")
 			},
 
 			ArithmeticShiftRightRegister { source, shift } => {
@@ -64,8 +84,12 @@ impl Display for Shifter {
 				write!(f, "#{immediate}<")
 			},
 
+			LogicalShiftLeftImmediate { source, shift: 0x0 } => {
+				write!(f, "{source}")
+			},
+
 			LogicalShiftLeftImmediate { source, shift } => {
-				write!(f, "{source}, LSL {shift}")
+				write!(f, "{source}, LSL #{shift}")
 			},
 
 			LogicalShiftLeftRegister { source, shift } => {
@@ -73,7 +97,7 @@ impl Display for Shifter {
 			},
 
 			LogicalShiftRightImmediate { source, shift } => {
-				write!(f, "{source}, LSR {shift}")
+				write!(f, "{source}, LSR #{shift}")
 			},
 
 			LogicalShiftRightRegister { source, shift } => {
@@ -85,7 +109,7 @@ impl Display for Shifter {
 			},
 
 			RotateRightImmediate { source, shift } => {
-				write!(f, "{source}, ROR {shift}")
+				write!(f, "{source}, ROR #{shift}")
 			},
 
 			RotateRightRegister { source, shift } => {

@@ -48,3 +48,49 @@ impl<const C: char> Display for Flag<C> {
 		Ok(())
 	}
 }
+
+impl<const C: char> From<bool> for Flag<C> {
+	#[inline(always)]
+	fn from(value: bool) -> Self {
+		if value {
+			Self::On
+		} else {
+			Self::Off
+		}
+	}
+}
+
+impl<const C: char> From<Flag<C>> for bool {
+	#[inline(always)]
+	fn from(value: Flag<C>) -> Self { value.is_on() }
+}
+
+impl<const C: char> From<Flag<C>> for u128 {
+	#[inline(always)]
+	fn from(value: Flag<C>) -> Self { Self::from(value.is_on()) }
+}
+
+impl<const C: char> From<Flag<C>> for u16 {
+	#[inline(always)]
+	fn from(value: Flag<C>) -> Self { Self::from(value.is_on()) }
+}
+
+impl<const C: char> From<Flag<C>> for u32 {
+	#[inline(always)]
+	fn from(value: Flag<C>) -> Self { Self::from(value.is_on()) }
+}
+
+impl<const C: char> From<Flag<C>> for u64 {
+	#[inline(always)]
+	fn from(value: Flag<C>) -> Self { Self::from(value.is_on()) }
+}
+
+impl<const C: char> From<Flag<C>> for u8 {
+	#[inline(always)]
+	fn from(value: Flag<C>) -> Self { Self::from(value.is_on()) }
+}
+
+impl<const C: char> From<Flag<C>> for usize {
+	#[inline(always)]
+	fn from(value: Flag<C>) -> Self { Self::from(value.is_on()) }
+}

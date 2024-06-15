@@ -31,26 +31,77 @@ impl Display for Instruction {
 			Add { predicate, destination, base, source, s }
 			=> write!(f, "ADD{predicate}{s} {destination}, {base}, {source}"),
 
+			AddCarry { predicate, destination, base, source, s }
+			=> write!(f, "ADC{predicate}{s} {destination}, {base}, {source}"),
+
+			And { predicate, destination, base, source, s }
+			=> write!(f, "AND{predicate}{s} {destination}, {base}, {source}"),
+
+			BitClear { predicate, destination, base, source, s }
+			=> write!(f, "BIC{predicate}{s} {destination}, {base}, {source}"),
+
 			Branch { predicate, immediate }
-			=> write!(f, "B{predicate} <{immediate}>"),
+			=> write!(f, "B{predicate} <#{immediate}>"),
 
 			BranchExchange { predicate, register }
 			=> write!(f, "BX{predicate} {register}"),
 
 			BranchLink { predicate, immediate }
-			=> write!(f, "BL{predicate} <{immediate}>"),
+			=> write!(f, "BL{predicate} <#{immediate}>"),
 
 			Breakpoint { immediate }
-			=> write!(f, "BKPT {immediate}"),
+			=> write!(f, "BKPT #{immediate}"),
+
+			CountLeadingZeroes { predicate, destination, source }
+			=> write!(f, "CLZ{predicate} {destination}, {source}"),
+
+			Compare { predicate, lhs, rhs }
+			=> write!(f, "CMP{predicate} {lhs}, {rhs}"),
+
+			CompareNegated { predicate, lhs, rhs }
+			=> write!(f, "CMN{predicate} {lhs}, {rhs}"),
+
+			ExclusiveOr { predicate, destination, base, source, s }
+			=> write!(f, "EOR{predicate}{s} {destination}, {base}, {source}"),
+
+			InclusiveOr { predicate, destination, base, source, s }
+			=> write!(f, "ORR{predicate}{s} {destination}, {base}, {source}"),
 
 			Move { predicate, destination, source, s }
 			=> write!(f, "MOV{predicate}{s} {destination}, {source}"),
 
-			MoveNegated { predicate, destination, source, s }
+			MoveNot { predicate, destination, source, s }
 			=> write!(f, "MVN{predicate}{s} {destination}, {source}"),
 
+			Multiply { predicate, destination, base, source, s }
+			=> write!(f, "MUL{predicate}{s} {destination}, {base}, {source}"),
+
+			MultiplyAccumulate { predicate, destination, base, source, shift, s }
+			=> write!(f, "MLA{predicate}{s} {destination}, {base}, {source}, {shift}"),
+
+			Reverse { predicate, destination, source }
+			=> write!(f, "REV{predicate} {destination}, {source}"),
+
+			ReverseSubtract { predicate, destination, base, source, s }
+			=> write!(f, "RSB{predicate}{s} {destination}, {base}, {source}"),
+
+			ReverseSubtractCarry { predicate, destination, base, source, s }
+			=> write!(f, "RSC{predicate}{s} {destination}, {base}, {source}"),
+
+			SaturatingAdd { predicate, destination, base, source }
+			=> write!(f, "QADD{predicate} {destination}, {base}, {source}"),
+
+			SaturatingSubtract { predicate, destination, base, source }
+			=> write!(f, "QSUB{predicate} {destination}, {base}, {source}"),
+
 			SoftwareInterrupt { predicate, immediate }
-			=> write!(f, "SWI{predicate} {immediate}"),
+			=> write!(f, "SWI{predicate} #{immediate}"),
+
+			Subtract { predicate, destination, base, source, s }
+			=> write!(f, "SUB{predicate}{s} {destination}, {base}, {source}"),
+
+			SubtractCarry { predicate, destination, base, source, s }
+			=> write!(f, "SBC{predicate}{s} {destination}, {base}, {source}"),
 		}
 	}
 }

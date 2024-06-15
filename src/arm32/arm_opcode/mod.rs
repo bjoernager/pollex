@@ -27,6 +27,8 @@ use core::fmt::{Debug, Display, Formatter};
 pub struct ArmOpcode(u32);
 
 impl ArmOpcode {
+	pub const SIZE: u32 = 0x4;
+
 	/// Creates a new opcode from a primitive.
 	#[inline(always)]
 	#[must_use]
@@ -52,7 +54,17 @@ impl Display for ArmOpcode {
 	}
 }
 
+impl From<u32> for ArmOpcode {
+	#[inline(always)]
+	fn from(value: u32) -> Self { Self::from_u32(value) }
+}
+
 impl PartialEq<u32> for ArmOpcode {
 	#[inline(always)]
 	fn eq(&self, other: &u32) -> bool { self.0 == *other }
+}
+
+impl From<ArmOpcode> for u32 {
+	#[inline(always)]
+	fn from(value: ArmOpcode) -> Self { value.to_u32() }
 }

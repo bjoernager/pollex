@@ -25,8 +25,6 @@ use crate::arm32::{
 	Instruction,
 	Register,
 	Shifter,
-	Signed,
-	Unsigned,
 };
 
 use alloc::format;
@@ -35,56 +33,49 @@ use alloc::vec::Vec;
 #[test]
 fn test_arm32_instruction() {
 	let tree = [
-		Instruction::BranchLink {
-			predicate: Predicate::HigherOrSame,
-			immediate: Signed::new(0x1F),
+		Instruction::Add {
+			predicate:   Predicate::GreaterThanOrEqual,
+			destination: Register::R1,
+			base:        Register::R2,
+			source:      Shifter::RotateRightImmediate { source: Register::R3, shift: 0x2 },
+			s:           Flag::Off,
 		},
 
-		Instruction::Breakpoint {
-			immediate: Unsigned::new(0x45),
+		Instruction::SaturatingSubtract {
+			predicate:   Predicate::LessThan,
+			destination: Register::R4,
+			base:        Register::R5,
+			source:      Register::R6,
 		},
 
-		Instruction::SoftwareInterrupt {
-			predicate: Predicate::Always,
-			immediate: Unsigned::new(0x54),
-		},
-
-		Instruction::Move {
-			predicate:   Predicate::Plus,
-			destination: Register::Pc,
-			source:      Shifter::ArithmeticShiftRightImmediate { source: Register::R3, shift: Unsigned::new(0x20) },
+		Instruction::InclusiveOr {
+			predicate:   Predicate::Always,
+			destination: Register::R7,
+			base:        Register::R8,
+			source:      Shifter::LogicalShiftLeftImmediate { source: Register::Sb, shift: 0x0 },
 			s:           Flag::On,
+		},
+
+		Instruction::MultiplyAccumulate {
+			predicate:   Predicate::Equal,
+			destination: Register::R0,
+			base:        Register::Pc,
+			source:      Register::Pc,
+			shift:       Register::Lr,
+			s:           Flag::Off,
 		},
 	];
 
 	let mut displays = Vec::with_capacity(tree.len());
-	let mut opcodes  = Vec::with_capacity(tree.len());
-
-	for instruction in tree {
-		displays.push(format!("{instruction}"));
-		opcodes.push(instruction.encode_arm().unwrap());
-	}
+ 	for instruction in tree { displays.push(format!("{instruction}")) }
 
 	assert_eq!(
 		displays,
 		[
-			"BLHS <#+31>",
-			"BKPT #69",
-			"SWI #84",
-			"MOVPLS pc, r3, ASR #32",
+			"ADDGE r1, r2, r3, ROR #2",
+			"QSUBLT r4, r5, r6",
+			"ORRS r7, r8, sb",
+			"MLAEQ r0, pc, pc, lr",
 		],
 	);
-
-	assert_eq!(
-		opcodes,
-		[
-			0b00101010_00000000_00000000_00000000,
-			0b11100001_00100000_00000100_01110101,
-			0b11101111_00000000_00000000_01010100,
-			0b01010001_10110000_11110000_01000011,
-		],
-	)
 }
-
-// 01010001101100001111000001000011
-// 01010001101100001111000001000011

@@ -25,11 +25,10 @@
 
 use crate::use_mod;
 use_mod!(pub arm_opcode);
-use_mod!(pub predicate);
 use_mod!(pub flag);
 use_mod!(pub instruction);
+use_mod!(pub instruction_codec);
+use_mod!(pub predicate);
 use_mod!(pub register);
 use_mod!(pub shifter);
-use_mod!(pub signed);
 use_mod!(pub thumb_opcode);
-use_mod!(pub unsigned);

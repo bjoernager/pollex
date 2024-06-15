@@ -27,6 +27,8 @@ use core::fmt::{Debug, Display, Formatter};
 pub struct ThumbOpcode(u16);
 
 impl ThumbOpcode {
+	pub const SIZE: u32 = 0x2;
+
 	/// Creates a new opcode from a primitive.
 	#[inline(always)]
 	#[must_use]
@@ -52,7 +54,17 @@ impl Display for ThumbOpcode {
 	}
 }
 
+impl From<u16> for ThumbOpcode {
+	#[inline(always)]
+	fn from(value: u16) -> Self { Self::from_u16(value) }
+}
+
 impl PartialEq<u16> for ThumbOpcode {
 	#[inline(always)]
 	fn eq(&self, other: &u16) -> bool { self.0 == *other }
+}
+
+impl From<ThumbOpcode> for u16 {
+	#[inline(always)]
+	fn from(value: ThumbOpcode) -> Self { value.to_u16() }
 }
