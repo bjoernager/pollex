@@ -19,17 +19,39 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
-//! Arm32-related facilities.
-//!
-//! This includes T variants of Arm32.
+use crate::arm32::{
+	Instruction,
+	InstructionCodec,
+	Predicate,
+	Register,
+};
 
-use crate::use_mod;
-use_mod!(pub address);
-use_mod!(pub arm_opcode);
-use_mod!(pub flag);
-use_mod!(pub instruction);
-use_mod!(pub instruction_codec);
-use_mod!(pub predicate);
-use_mod!(pub register);
-use_mod!(pub shifter);
-use_mod!(pub thumb_opcode);
+use alloc::vec::Vec;
+
+#[test]
+fn test_thumb_decode() {
+	let binary = [
+		0b11011111_10101010,
+		0b01000111_01110000,
+	];
+
+	let mut codec = InstructionCodec::new();
+
+	let mut programme = Vec::new();
+	for opcode in binary { programme.push(codec.decode_thumb(opcode.into()).unwrap()) }
+
+	assert_eq!(
+		programme,
+		[
+			Instruction::SoftwareInterrupt {
+				predicate: Predicate::Always,
+				immediate: 0b10101010,
+			},
+
+			Instruction::BranchExchange {
+				predicate: Predicate::Always,
+				source:    Register::Lr,
+			},
+		],
+	)
+}

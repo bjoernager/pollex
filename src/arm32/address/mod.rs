@@ -19,17 +19,34 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
-//! Arm32-related facilities.
-//!
-//! This includes T variants of Arm32.
+use crate::arm32::{Register, Shifter};
 
-use crate::use_mod;
-use_mod!(pub address);
-use_mod!(pub arm_opcode);
-use_mod!(pub flag);
-use_mod!(pub instruction);
-use_mod!(pub instruction_codec);
-use_mod!(pub predicate);
-use_mod!(pub register);
-use_mod!(pub shifter);
-use_mod!(pub thumb_opcode);
+use core::fmt::{Display, Formatter};
+
+/// An address operand.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Address {
+	ImmediateOffset { base: Register, source: i32 },
+
+	RegisterOffset { base: Register, source: Register },
+
+	ScaledRegisterOffset { base: Register, source: Register, shift: Shifter },
+
+}
+
+impl Display for Address {
+	fn fmt(&self, f: &mut Formatter) -> core::fmt::Result {
+		use Address::*;
+
+		match *self {
+			ImmediateOffset { base, source }
+			=> write!(f, "[{base}, #{source}]"),
+
+			RegisterOffset { base, source }
+			=> write!(f, "[{base}, {source}]"),
+
+			ScaledRegisterOffset { base, source, shift }
+			=> write!(f, "[{base}, {source}, {shift}]"),
+		}
+	}
+}

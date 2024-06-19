@@ -21,24 +21,24 @@
 
 use crate::arm32::{
 	Predicate,
-	Flag,
+	Sflag,
 	Instruction,
 	Register,
 	Shifter,
 };
 
-use alloc::format;
+use alloc::string::ToString;
 use alloc::vec::Vec;
 
 #[test]
-fn test_arm32_instruction() {
+fn test_instruction_display() {
 	let tree = [
 		Instruction::Add {
 			predicate:   Predicate::GreaterThanOrEqual,
 			destination: Register::R1,
 			base:        Register::R2,
 			source:      Shifter::RotateRightImmediate { source: Register::R3, shift: 0x2 },
-			s:           Flag::Off,
+			s:           Sflag::Off,
 		},
 
 		Instruction::SaturatingSubtract {
@@ -53,7 +53,7 @@ fn test_arm32_instruction() {
 			destination: Register::R7,
 			base:        Register::R8,
 			source:      Shifter::LogicalShiftLeftImmediate { source: Register::R9, shift: 0x0 },
-			s:           Flag::On,
+			s:           Sflag::On,
 		},
 
 		Instruction::MultiplyAccumulate {
@@ -62,19 +62,41 @@ fn test_arm32_instruction() {
 			base:        Register::Pc,
 			source:      Register::Pc,
 			shift:       Register::Lr,
-			s:           Flag::Off,
+			s:           Sflag::Off,
 		},
 
 		Instruction::Move {
 			predicate:   Predicate::NotEqual,
 			destination: Register::R0,
 			source:      Shifter::LogicalShiftLeftImmediate { source: Register::Pc, shift: 0x0 },
-			s:           Flag::Off,
+			s:           Sflag::Off,
+		},
+
+		Instruction::ReverseSubtract {
+			predicate:   Predicate::Always,
+			destination: Register::R0,
+			base:        Register::R0,
+			source:      Shifter::Immediate(0x0),
+			s:           Sflag::On,
+		},
+
+		Instruction::Move {
+			predicate:   Predicate::GreaterThan,
+			destination: Register::R0,
+			source:      Shifter::LogicalShiftRightImmediate { source: Register::R7, shift: 0x20 },
+			s:           Sflag::On,
+		},
+
+		Instruction::Move {
+			predicate:   Predicate::Always,
+			destination: Register::R0,
+			source:      Shifter::LogicalShiftLeftImmediate { source: Register::R0, shift: 0x0 },
+			s:           Sflag::On,
 		},
 	];
 
 	let mut displays = Vec::with_capacity(tree.len());
- 	for instruction in tree { displays.push(format!("{instruction}")) }
+ 	for instruction in tree { displays.push(instruction.to_string()) }
 
 	assert_eq!(
 		displays,
@@ -83,7 +105,10 @@ fn test_arm32_instruction() {
 			"QSUBLT r4, r5, r6",
 			"ORRS r7, r8, r9",
 			"MLAEQ r0, pc, pc, lr",
-			"CPYNE r0, pc"
+			"CPYNE r0, pc",
+			"NEGS r0, r0",
+			"LSRGTS r0, r7, #32",
+			"MOVS r0, r0",
 		],
 	);
 }

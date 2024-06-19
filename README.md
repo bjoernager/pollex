@@ -1,8 +1,81 @@
-# About
+# Pollex
 
 [Pollex](https://crates.io/crates/pollex/) is a Rust-written library for manipulating instructions of Arm ISAs.
 
 See [Docs.rs](https://docs.rs/pollex/) for documentation.
+
+## Support
+
+Pollex supports encoding of instructions to both Arm and Thumb on Arm32 targets.
+Arm64 support is planned.
+
+## Usage
+
+Instructions can be created directly using the `Instruction` type:
+
+```rs
+use pollex::arm32::{
+    Instruction,
+    Predicate,
+    Register,
+    Sflag,
+    Shifter,
+};
+
+// MOVS r0, r1
+let instr = Instruction::Move {
+    predicate:   Predicate::Always,
+    destination: Register::R0,
+    source:      Shifter::from_register(Register::R1),
+    s:           Sflag::On,
+};
+```
+
+Instructions can also be parsed from strings:
+
+```rs
+use pollex::arm32::{
+    Instruction,
+    Predicate,
+    Register,
+    Sflag,
+    Shifter,
+};
+
+let instr: Instruction = "CPY r0, r1".parse()?;
+
+// Is equivalent to:
+
+let instr = Instruction::Move {
+    predicate:   Predicate::Always,
+    destination: Register::R0,
+    source:      Shifter::from_register(Register::R1),
+    s:           Sflag::Off,
+};
+
+# Ok::<(), Box<dyn std::error::Error>>(())
+```
+
+But do note that the latter is currently **not** implemented.
+
+Instructions can be encoded to both Arm and Thumb using the `InstructionCodec` type:
+
+```rs
+use pollex::arm32::{Instruction, InstructionCodec};
+
+let instr: Instruction = "BX lr".parse()?;
+
+let mut codec = InstructionCodec::new();
+
+let arm_opcode   = codec.encode_arm(instr)?;
+let thumb_opcode = codec.encode_thumb(instr)?;
+
+assert_eq!(arm_opcode, 0b11100001_00101111_11111111_00011110);
+assert_eq!(thumb_opcode.0, 0b01000111_01110000);
+assert_eq!(thumb_opcode.1, None);
+
+# Ok::<(), Box<dyn std::error::Error>>(())
+```
 
 ## Copyright & Licensing
 

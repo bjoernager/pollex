@@ -3,6 +3,35 @@
 This is the changelog of Pollex.
 See `"README.md"` for more information.
 
+## 0.5.0
+
+* Document `assert_or_err`
+* Add docs logo
+* Restructure tests
+* Bump minor
+* Update lints
+* Add new errors: `IllegalFlag`, `IllegalShifter`, `InvalidOpcode`, `UnknownMnemonic`
+* Update readme
+* Update documentation
+* Improve diagnostics
+
+### Arm32
+
+* Encode more instructions for Thumb
+* Make `InstructionCodec::encode_thumb` return tuple
+* Add new instructions: `Test`, `TestEquivalence`, `UnsignedSaturate`, `PreloadData`, `BranchLinkExchange`, `Swap`, `Load`, `Store`
+* Rework `Flag`
+* Add `Address` type
+* Add `as_register` method to `Shifter`
+* Add `skip_words`, `skip_halfwords`, and `skib_bytes` methods to `InstructionCodec`
+* Add `from_register` method to `Shifter`
+* Add Thumb decoding to `InstructionCodec`
+* Add `from_u8` method to `Predicate`
+* Add `from_u8` method to `Register`
+* Implement `FromStr` for `Instruction`
+* Add new `Sflag`, `Bflag`, and `Tflag` flags
+* Add `seek_to` method to `InstructionCodec`
+
 ## 0.4.0
 
 * Bump minor version

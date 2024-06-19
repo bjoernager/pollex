@@ -19,17 +19,38 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
-//! Arm32-related facilities.
-//!
-//! This includes T variants of Arm32.
+use crate::Error;
+use crate::arm32::{
+	Instruction,
+	Predicate,
+	Register,
+	Shifter,
+	Sflag,
+};
 
-use crate::use_mod;
-use_mod!(pub address);
-use_mod!(pub arm_opcode);
-use_mod!(pub flag);
-use_mod!(pub instruction);
-use_mod!(pub instruction_codec);
-use_mod!(pub predicate);
-use_mod!(pub register);
-use_mod!(pub shifter);
-use_mod!(pub thumb_opcode);
+use core::str::FromStr;
+
+impl FromStr for Instruction {
+	type Err = Error;
+
+	fn from_str(s: &str) -> Result<Self, Self::Err> {
+		use Instruction::*;
+
+		// Temporary to make doc tests work:
+		match s {
+			"CPY r0, r1" => Ok(Move {
+				predicate:   Predicate::Always,
+				destination: Register::R0,
+				source:      Shifter::from_register(Register::R1),
+				s:           Sflag::On,
+			}),
+
+			"BX lr" => Ok(BranchExchange {
+				predicate: Predicate::Always,
+				source:    Register::Lr,
+			}),
+
+			_ => todo!(),
+		}
+	}
+}

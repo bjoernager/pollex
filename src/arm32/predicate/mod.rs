@@ -20,6 +20,7 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 use core::fmt::Display;
+use core::mem::transmute;
 
 /// An instruction predicate (condition code).
 ///
@@ -46,6 +47,22 @@ pub enum Predicate {
 	LessThanOrEqual    = 0b1101,
 	Always             = 0b1110,
 	//Never              = 0b1111,
+}
+
+impl Predicate {
+	/// Converts the provided byte into a register identifier.
+	/// If the byte's value is not a valid predicate, [`None`] is returned.
+	///
+	/// This conversion is valid for all values less than or equal (14).
+	#[inline]
+	#[must_use]
+	pub const fn from_u8(value: u8) -> Option<Self> {
+		if value <= 0b1110 {
+			Some(unsafe { transmute::<u8, Self>(value) })
+		} else {
+			None
+		}
+	}
 }
 
 impl Display for Predicate {

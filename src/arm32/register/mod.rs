@@ -19,16 +19,31 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
+use alloc::borrow::ToOwned;
+
 use crate::Error;
 
 use core::fmt::Display;
+use core::mem::transmute;
 use core::str::FromStr;
 
 /// An Arm register.
 ///
 /// Some opcodes can only encode specific registers.
-/// For example, many Thumb instructions only accept registers from `r0` to `r7` (the so-called *low* registers).
-/// Other opcodes only encode a single register (which is then inferred from the opcode in question).
+/// And yet other opcodes only encode a single register (which is then inferred from the opcode in question).
+///
+/// # Low registers
+///
+/// The registers whose identifiers can fit into `3` bits (i.e. registers from `r0` to `r7`, inclusive) are called *low* registers.
+///
+/// Some instructions (primarily on Thumb) can only encode low registers.
+/// In the case of Thumb, a few instructions can be used to move values to and from low registers.
+///
+/// # High registers
+///
+/// In contrast to low registers, registers that can only be addressed using `4` bíts are called *high registers*.
+///
+/// Some instructions are pedantic about combining both low and high registers.
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 #[repr(u8)]
 pub enum Register {
@@ -51,6 +66,20 @@ pub enum Register {
 }
 
 impl Register {
+	/// Converts the provided byte into a register identifier.
+	/// If the byte's value is not a valid identifier, [`None`] is returned.
+	///
+	/// This conversion is valid for all `4`-bit values.
+	#[inline]
+	#[must_use]
+	pub const fn from_u8(value: u8) -> Option<Self> {
+		if value <= 0b1111 {
+			Some(unsafe { transmute::<u8, Self>(value) })
+		} else {
+			None
+		}
+	}
+
 	/// Checks if the register is a low register.
 	///
 	/// That is, it is any of `r0`, `r1`, `r2`, `r3`, `r4`, `r5`, `r6`, or `r7` -- or any alias herof.
@@ -166,7 +195,7 @@ impl FromStr for Register {
 			| "r15"
 			=> Ok(Pc),
 
-			_ => Err(Error::UnknownRegister)
+			_ => Err(Error::UnknownRegister(s.to_owned()))
 		}
 	}
 }

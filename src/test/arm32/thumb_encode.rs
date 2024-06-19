@@ -20,53 +20,55 @@
 // If not, see <https://www.gnu.org/licenses/>.
 
 use crate::arm32::{
-	Flag,
 	Instruction,
 	InstructionCodec,
 	Predicate,
 	Register,
+	Sflag,
 	Shifter,
 };
 
 use alloc::vec::Vec;
 
 #[test]
-fn test_arm32_encoder() {
-	let tree = [
+fn test_thumb_encode() {
+	let programme = [
 		Instruction::BranchLink {
-			predicate: Predicate::HigherOrSame,
-			immediate: 0x1F,
-		},
-
-		Instruction::Breakpoint {
-			immediate: 0x45,
-		},
-
-		Instruction::SoftwareInterrupt {
 			predicate: Predicate::Always,
-			immediate: 0x54,
+			source:    0x08000044,
 		},
 
-		Instruction::Move {
-			predicate:   Predicate::Plus,
-			destination: Register::Pc,
-			source:      Shifter::ArithmeticShiftRightImmediate { source: Register::R3, shift: 0x20 },
-			s:           Flag::On,
+		Instruction::And {
+			predicate:   Predicate::Always,
+			destination: Register::R0,
+			base:        Register::R0,
+			source:      Shifter::LogicalShiftLeftImmediate { source: Register::R7, shift: 0x0 },
+			s:           Sflag::On,
+		},
+
+		Instruction::Branch {
+			predicate: Predicate::Always,
+			immediate: 0x08000008,
 		},
 	];
 
 	let mut codec = InstructionCodec::new_at(0x08000000);
 
 	let mut opcodes = Vec::new();
-	for instruction in tree { opcodes.push(codec.encode_arm(instruction).unwrap()) }
+	for instruction in programme {
+		let opcode = codec.encode_thumb(instruction).unwrap();
+
+		opcodes.push(opcode.0);
+		if let Some(opcode) = opcode.1 { opcodes.push(opcode) };
+	}
 
 	assert_eq!(
 		opcodes,
 		[
-			0b00101010_00000000_00000000_00000000,
-			0b11100001_00100000_00000100_01110101,
-			0b11101111_00000000_00000000_01010100,
-			0b01010001_10110000_11110000_01000011,
+			0b11110000_00000000,
+			0b11111000_00100000,
+			0b01000000_00111000,
+			0b11100000_00000000,
 		],
 	)
 }

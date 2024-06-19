@@ -19,7 +19,7 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
-use crate::arm32::{Flag, Instruction, Shifter};
+use crate::arm32::{Sflag, Instruction, Shifter};
 
 use core::fmt::Display;
 
@@ -63,17 +63,22 @@ impl Display for Instruction {
 			Branch {
 				predicate,
 				immediate,
-			} => write!(f, "B{predicate} <#{immediate}>"),
+			} => write!(f, "B{predicate} #{immediate}"),
 
 			BranchExchange {
 				predicate,
-				register,
-			} => write!(f, "BX{predicate} {register}"),
+				source,
+			} => write!(f, "BX{predicate} {source}"),
 
 			BranchLink {
 				predicate,
-				immediate,
-			} => write!(f, "BL{predicate} <#{immediate}>"),
+				source,
+			} => write!(f, "BL{predicate} #{source}"),
+
+			BranchLinkExchange {
+				predicate,
+				source,
+			} => write!(f, "BLX{predicate} {source}"),
 
 			Breakpoint {
 				immediate } => write!(f, "BKPT #{immediate}"),
@@ -112,12 +117,76 @@ impl Display for Instruction {
 				s,
 			} => write!(f, "ORR{predicate}{s} {destination}, {base}, {source}"),
 
+			Load {
+				predicate,
+				register,
+				address,
+				b,
+				t,
+			} => write!(f, "LDR{predicate}{b}{t} {register}, {address}"),
+
 			Move {
 				predicate,
 				destination,
 				source:      Shifter::LogicalShiftLeftImmediate { source, shift: 0x0 },
-				s:           Flag::Off,
+				s:           Sflag::Off,
 			} => write!(f, "CPY{predicate} {destination}, {source}"),
+
+			Move {
+				predicate,
+				destination,
+				source:      Shifter::ArithmeticShiftRightImmediate { source, shift },
+				s,
+			} => write!(f, "ASR{predicate}{s} {destination}, {source}, #{shift}"),
+
+			Move {
+				predicate,
+				destination,
+				source:      Shifter::ArithmeticShiftRightRegister { source, shift },
+				s,
+			} => write!(f, "ASR{predicate}{s} {destination}, {source}, {shift}"),
+
+			Move {
+				predicate,
+				destination,
+				source:      Shifter::LogicalShiftLeftImmediate { source, shift },
+				s,
+			} if shift != 0x0 => write!(f, "LSL{predicate}{s} {destination}, {source}, #{shift}"),
+
+			Move {
+				predicate,
+				destination,
+				source:      Shifter::LogicalShiftLeftRegister { source, shift },
+				s,
+			} => write!(f, "LSL{predicate}{s} {destination}, {source}, {shift}"),
+
+			Move {
+				predicate,
+				destination,
+				source:      Shifter::LogicalShiftRightImmediate { source, shift },
+				s,
+			} => write!(f, "LSR{predicate}{s} {destination}, {source}, #{shift}"),
+
+			Move {
+				predicate,
+				destination,
+				source:      Shifter::LogicalShiftRightRegister { source, shift },
+				s,
+			} => write!(f, "LSR{predicate}{s} {destination}, {source}, {shift}"),
+
+			Move {
+				predicate,
+				destination,
+				source:      Shifter::RotateRightImmediate { source, shift },
+				s,
+			} => write!(f, "ROR{predicate}{s} {destination}, {source}, #{shift}"),
+
+			Move {
+				predicate,
+				destination,
+				source:      Shifter::RotateRightRegister { source, shift },
+				s,
+			} => write!(f, "ROR{predicate}{s} {destination}, {source}, {shift}"),
 
 			Move {
 				predicate,
@@ -160,6 +229,14 @@ impl Display for Instruction {
 				predicate,
 				destination,
 				base,
+				source: Shifter::Immediate(0x0),
+				s,
+			} => write!(f, "NEG{predicate}{s} {destination}, {base}"),
+
+			ReverseSubtract {
+				predicate,
+				destination,
+				base,
 				source,
 				s,
 			} => write!(f, "RSB{predicate}{s} {destination}, {base}, {source}"),
@@ -191,6 +268,14 @@ impl Display for Instruction {
 				immediate,
 			} => write!(f, "SWI{predicate} #{immediate}"),
 
+			Store {
+				predicate,
+				register,
+				address,
+				b,
+				t,
+			} => write!(f, "STR{predicate}{b}{t} {register}, {address}"),
+
 			Subtract {
 				predicate,
 				destination,
@@ -206,6 +291,32 @@ impl Display for Instruction {
 				source,
 				s,
 			} => write!(f, "SBC{predicate}{s} {destination}, {base}, {source}"),
+
+			Swap {
+				predicate,
+				register,
+				address,
+				b,
+			} => write!(f, "SWP{predicate}{b} {register}, {address}"),
+
+			UnsignedSaturate {
+				predicate,
+				destination,
+				immediate,
+				source,
+			} => write!(f, "USAT{predicate} {destination}, #{immediate}, {source}"),
+
+			Test {
+				predicate,
+				lhs,
+				rhs,
+			} => write!(f, "TST{predicate} {lhs}, {rhs}"),
+
+			TestEquivalence {
+				predicate,
+				lhs,
+				rhs,
+			} => write!(f, "TEQ{predicate} {lhs}, {rhs}"),
 		}
 	}
 }

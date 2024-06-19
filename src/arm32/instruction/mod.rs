@@ -19,16 +19,17 @@
 // fero General Public License along with Pollex.
 // If not, see <https://www.gnu.org/licenses/>.
 
-#[cfg(test)]
-mod test;
-
 mod display;
+mod from_str;
 
 use crate::arm32::{
+	Address,
+	Bflag,
 	Predicate,
-	Flag,
+	Sflag,
 	Register,
 	Shifter,
+	Tflag
 };
 
 /// An Arm32 instruction.
@@ -49,7 +50,7 @@ use crate::arm32::{
 /// See [`Shifter`] for more information.
 ///
 /// Also note that not all operands can be encoded in Arm instruction sets.
-/// Even the largest immediates usually have a limit at (24) significant figures.
+/// Even the largest immediates usually have a limit at `24` significant figures.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Instruction {
 	Add {
@@ -57,7 +58,7 @@ pub enum Instruction {
 		destination: Register,
 		base:        Register,
 		source:      Shifter,
-		s:           Flag<'S'>,
+		s:           Sflag,
 	},
 
 	AddCarry {
@@ -65,7 +66,7 @@ pub enum Instruction {
 		destination: Register,
 		base:        Register,
 		source:      Shifter,
-		s:           Flag<'S'>,
+		s:           Sflag,
 	},
 
 	And {
@@ -73,7 +74,7 @@ pub enum Instruction {
 		destination: Register,
 		base:        Register,
 		source:      Shifter,
-		s:           Flag<'S'>,
+		s:           Sflag,
 	},
 
 	BitClear {
@@ -81,22 +82,27 @@ pub enum Instruction {
 		destination: Register,
 		base:        Register,
 		source:      Shifter,
-		s:           Flag<'S'>,
+		s:           Sflag,
 	},
 
 	Branch {
 		predicate: Predicate,
-		immediate: i32,
+		immediate: u32,
 	},
 
 	BranchExchange {
 		predicate: Predicate,
-		register:  Register,
+		source:    Register,
 	},
 
 	BranchLink {
 		predicate: Predicate,
-		immediate: i32,
+		source:    u32,
+	},
+
+	BranchLinkExchange {
+		predicate: Predicate,
+		source:    Shifter,
 	},
 
 	Breakpoint {
@@ -126,7 +132,7 @@ pub enum Instruction {
 		destination: Register,
 		base:        Register,
 		source:      Shifter,
-		s:           Flag<'S'>,
+		s:           Sflag,
 	},
 
 	InclusiveOr {
@@ -134,21 +140,29 @@ pub enum Instruction {
 		destination: Register,
 		base:        Register,
 		source:      Shifter,
-		s:           Flag<'S'>,
+		s:           Sflag,
+	},
+
+	Load {
+		predicate: Predicate,
+		register:  Register,
+		address:   Address,
+		b:         Bflag,
+		t:         Tflag,
 	},
 
 	Move {
 		predicate:   Predicate,
 		destination: Register,
 		source:      Shifter,
-		s:           Flag<'S'>,
+		s:           Sflag,
 	},
 
 	MoveNot {
 		predicate:   Predicate,
 		destination: Register,
 		source:      Shifter,
-		s:           Flag<'S'>,
+		s:           Sflag,
 	},
 
 	Multiply {
@@ -156,7 +170,7 @@ pub enum Instruction {
 		destination: Register,
 		base:        Register,
 		source:      Register,
-		s:           Flag<'S'>,
+		s:           Sflag,
 	},
 
 	MultiplyAccumulate {
@@ -165,7 +179,7 @@ pub enum Instruction {
 		base:        Register,
 		source:      Register,
 		shift:       Register,
-		s:           Flag<'S'>,
+		s:           Sflag,
 	},
 
 	Reverse {
@@ -179,7 +193,7 @@ pub enum Instruction {
 		destination: Register,
 		base:        Register,
 		source:      Shifter,
-		s:           Flag<'S'>,
+		s:           Sflag,
 	},
 
 	ReverseSubtractCarry {
@@ -187,7 +201,7 @@ pub enum Instruction {
 		destination: Register,
 		base:        Register,
 		source:      Shifter,
-		s:           Flag<'S'>,
+		s:           Sflag,
 	},
 
 	SaturatingAdd {
@@ -209,12 +223,20 @@ pub enum Instruction {
 		immediate: u32,
 	},
 
+	Store {
+		predicate: Predicate,
+		register:  Register,
+		address:   Address,
+		b:         Bflag,
+		t:         Tflag,
+	},
+
 	Subtract {
 		predicate:   Predicate,
 		destination: Register,
 		base:        Register,
 		source:      Shifter,
-		s:           Flag<'S'>,
+		s:           Sflag,
 	},
 
 	SubtractCarry {
@@ -222,6 +244,32 @@ pub enum Instruction {
 		destination: Register,
 		base:        Register,
 		source:      Shifter,
-		s:           Flag<'S'>,
+		s:           Sflag,
+	},
+
+	Swap {
+		predicate: Predicate,
+		register:  Register,
+		address:   Address,
+		b:         Bflag,
+	},
+
+	UnsignedSaturate {
+		predicate:   Predicate,
+		destination: Register,
+		immediate:   u32,
+		source:      Shifter,
+	},
+
+	Test {
+		predicate: Predicate,
+		lhs:       Register,
+		rhs:       Shifter,
+	},
+
+	TestEquivalence {
+		predicate: Predicate,
+		lhs:       Register,
+		rhs:       Shifter,
 	},
 }
