@@ -1,12 +1,12 @@
 [package]
 name          = "pollex"
-version       = "0.5.0"
+version       = "0.5.1"
 authors       = ["Gabriel Bjørnager Jensen"]
 edition       = "2021"
 description   = "Arm instruction manipulator."
 documentation = "https://docs.rs/pollex/"
 readme        = "README.md"
-homepage      = "https://crates.io/crates/pollex"
+homepage      = "https://achernar.dk/html/pollex.html"
 repository    = "https://mandelbrot.dk/pollex"
 license       = "AGPL-3.0-or-later"
 

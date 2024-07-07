@@ -3,6 +3,10 @@
 This is the changelog of Pollex.
 See `"README.md"` for more information.
 
+## 0.5.1
+
+* Update package metadata
+
 ## 0.5.0
 
 * Document `assert_or_err`
